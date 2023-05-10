@@ -1,0 +1,66 @@
+<?php
+
+
+use Magento\Framework\App\Bootstrap;
+require dirname(__DIR__) . '/app/bootstrap.php';
+$bootstrap = Bootstrap::create(BP, $_SERVER);
+$objectManager = $bootstrap->getObjectManager();
+$state = $objectManager->get('Magento\Framework\App\State');
+$state->setAreaCode('frontend');
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$quoteRepository = $objectManager->get(\Amasty\QuoteAttributes\Api\QuoteEntityRepositoryInterface::class);
+echo "<pre>";
+$quoteId = 1; // Replace with the actual quote ID
+
+$quoteId = 19; // Replace with the actual quote ID
+
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$quoteRepository = $objectManager->get(\Amasty\QuoteAttributes\Api\QuoteEntityRepositoryInterface::class);
+echo "<pre>";
+
+// Replace with the actual quote ID
+$quoteId = 19;
+
+try {
+    $quoteEntity = $quoteRepository->getByQuoteId($quoteId);
+    $data = $quoteEntity->getData();
+    unset($data['entity_id']);
+    unset($data['quote_id']);
+    $html = '';
+
+    foreach ($data as $attributeCode => $attributeValue) {
+        $attribute = $quoteEntity->getResource()->getAttribute($attributeCode);
+
+        if ($attribute) {
+            $attributeLabel = $attribute->getDefaultFrontendLabel();
+
+            if ($attributeCode === 'test' && $attribute->usesSource()) {
+                $optionText = $attribute->getSource()->getOptionText($attributeValue);
+                $html .= "<br>" . $attributeLabel . " :: " . $optionText . "<br>";
+            } else {
+                $html .= "<br>" . $attributeLabel . " :: " . $attributeValue . "<br>";
+            }
+        }
+    }
+
+    echo $html;
+    exit;
+} catch (\Exception $e) {
+    // Handle the exception here
+    echo "An error occurred: " . $e->getMessage();
+    exit;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+// print_r(get_class_methods($order));
+
